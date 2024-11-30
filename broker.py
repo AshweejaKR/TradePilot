@@ -28,13 +28,13 @@ class broker:
         return ""
     
     def __place_order(self, ticker, quantity, buy_sell, exchange):
-        return ""
+        return "ID1234"
     
     def __wait_till_order_fill(self, orderid):
         pass
 
     def __get_oder_status(self, orderid):
-        return ""
+        return "complete"
     
     def __get_margin(self):
         return ""
@@ -51,10 +51,10 @@ class broker:
         return ""
     
     def get_margin(self):
-        return ""
+        return 10000
     
     def get_current_price(self, ticker, exchange):
-        return ""
+        return 100.00
     
     def hist_data_daily(self, ticker, duration, exchange):
         return ""
@@ -75,7 +75,7 @@ class broker:
             return orderid
     
     def get_oder_status(self, orderid):
-        status = self.__get_oder_status()
+        status = self.__get_oder_status(orderid)
         return status
     
     def verify_position(self, sym, qty, exit=False):
@@ -84,7 +84,10 @@ class broker:
     def verify_holding(self, sym, qty):
         return True
     
-    def get_entry_exit_price(self, sym, exit=False):
-        price = 0.0
+    def get_entry_exit_price(self, sym, _exit=False):
+        if _exit:
+            price = 150.00
+        else:
+            price = 100.00
         return price
 

@@ -6,8 +6,7 @@ Created on Sat Nov 30 23:01:41 2024
 """
 
 import json
-# import urllib
-# import os
+import os
 import datetime as dt
 import pytz
 import time
@@ -24,7 +23,7 @@ def wait_till_market_open():
         cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
         if cur_time > endTime or cur_time < waitTime:
             lg.info('Market is closed. \n')
-            return False
+            return True
 
         if cur_time > startTime:
             break
@@ -35,20 +34,12 @@ def wait_till_market_open():
     lg.info("Market is Opened ...")
     return True
 
-count_1 = 0
 def is_market_open(mode='None'):
-    global count_1
-    count_1 = count_1 + 1
-    if count_1 > 10:
-        return False
-    return True
-
-
     cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
     if startTime <= cur_time <= endTime:
         return True
     else:
-        return False
+        return True
 
 # Function to write data to a JSON file
 def write_to_json(data, filename):
@@ -114,3 +105,28 @@ def remove_positions(ticker):
         template = "An exception of type {0} occurred. error message:{1!r}"
         message = template.format(type(err).__name__, err.args)
         lg.debug("{}".format(message))
+
+def save_trade_in_csv(ticker, quantity, order_type, price):
+    datetime =  dt.datetime.now().strftime('%Y-%m-%d %H:%M')
+    filename = ticker + "_trade_report.csv"
+    pos_path = './data/'
+    currentpos_path = pos_path + filename
+    try:
+        os.mkdir(pos_path)
+    except Exception as err:
+        pass
+
+    try:
+        with open(currentpos_path) as f:
+            data = f.read()
+    except Exception as err:
+        print(err)
+        data = "datetime,ticker,quantity,order_type,price\n"
+    
+    data = data + str(datetime) + "," + str(ticker) + "," + str(quantity) + "," + str(order_type) + "," + str(price) + "\n"
+    try:
+        with open(currentpos_path, "w") as f:
+            f.write(data)
+            f.flush()
+    except Exception as err:
+        print(err)
