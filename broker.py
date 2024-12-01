@@ -6,75 +6,66 @@ Created on Sat Nov 30 22:07:10 2024
 """
 
 from logger import *
+from angleone_broker import *
+from aliceblue_broker import *
 
 class broker:
     def __init__(self, usr_="NO_USR"):
         self.usr = usr_
-        lg.info(f"{self.usr} broker class constructor called")        
+        lg.info(f"{self.usr} broker class constructor called")
         self._instance = None
-        self.__login()
-        self.cp = 100.00
+        # self._instance = angleone()
+        # self._instance = aliceblue()
     
     def __del__(self):
         lg.info(f"{self.usr} broker class destructor called")
-        self.__logout()
-    
-    def __login(self):
-        lg.info("Login done ...")
-    
-    def __logout(self):
-        lg.info("Logout done ...")
-    
-    def __place_order(self, ticker, quantity, buy_sell, exchange):
-        return "ID1234"
-    
-    def __wait_till_order_fill(self, orderid):
+
+    def __wait_till_order_fill(self, orderid, order):
         count = 0
-        lg.info('Buy order is in open, waiting ... %d ' % count)
-        while self.__get_oder_status(orderid) == 'open':
-            lg.info('Buy order is in open, waiting ... %d ' % count)
+        lg.info('%s order is in open, waiting ... %d ' % (order, count))
+        while self._instance.get_oder_status(orderid) == 'open':
+            lg.info('%s order is in open, waiting ... %d ' % (order, count))
             count = count + 1
 
-    def __get_oder_status(self, orderid):
-        return "complete"
-    
 ###############################################################################
 
     def get_user_data(self):
-        return ""
+        usr = self._instance.get_user_data()
+        return usr
     
     def get_trade_margin(self):
-        return 10000
+        margin = self._instance.get_trade_margin()
+        return margin
     
     def get_current_price(self, ticker, exchange):
-        self.cp = float(input("Enter current price:\n"))
-        return self.cp
-    
+        cp = self._instance.get_current_price(ticker, exchange)
+        return cp
+
     def hist_data_daily(self, ticker, duration, exchange):
-        return ""
+        self._instance.hist_data_daily(ticker, duration, exchange)
     
     def hist_data_intraday(self, ticker, exchange, datestamp=dt.date.today()):
-        return ""
+        self._instance.hist_data_intraday(ticker, exchange, datestamp=dt.date.today())
     
     def place_buy_order(self, ticker, quantity, exchange):
         buy_sell = "BUY"
-        orderid = self.__place_order(ticker, quantity, buy_sell, exchange)
-        self.__wait_till_order_fill(orderid)
-        status = self.__get_oder_status(orderid)
+        orderid = self._instance.place_buy_order(ticker, quantity, exchange)
+        self.__wait_till_order_fill(orderid, buy_sell)
+        status = self._instance.get_oder_status(orderid)
         if status == 'complete':
             return True
         else:
             return False
 
     def place_sell_order(self, ticker, quantity, exchange):
-            buy_sell = "SELL"
-            orderid = self.__place_order(ticker, quantity, buy_sell, exchange)
-            self.__wait_till_order_fill(orderid)
-            status = self.__get_oder_status(orderid)
-            if status == 'complete':
-                return True
-            else:
-                return False
+        buy_sell = "SELL"
+        orderid = self._instance.place_sell_order(ticker, quantity, exchange)
+        self.__wait_till_order_fill(orderid, buy_sell)
+        status = self._instance.get_oder_status(orderid)
+        if status == 'complete':
+            return True
+        else:
+            return False
     
     def verify_position(self, sym, qty, exit=False):
         return True
@@ -83,9 +74,5 @@ class broker:
         return True
     
     def get_entry_exit_price(self, sym, _exit=False):
-        if _exit:
-            price = self.cp
-        else:
-            price = self.cp
-        return price
-
+        ep = self._instance.get_entry_exit_price(sym, _exit)
+        return ep

@@ -24,6 +24,8 @@ class autotick:
         self.takeprofit_price = None
         self.stoploss_price = None
         self.trigger_price = None
+        self.stoploss_p = 0.05
+        self.target_p = 0.1
         self.trailSL = True
         self.capital_per_trade = 1000.00
 
@@ -31,11 +33,11 @@ class autotick:
         lg.info("autotick class destructor called")
 
     def __set_stoploss(self):
-        self.stoploss_price = self.entry_price - (self.entry_price * 0.1)
+        self.stoploss_price = self.entry_price - (self.entry_price * self.stoploss_p)
 
     def __set_takeprofit(self):
-        self.takeprofit_price = self.entry_price + (self.entry_price * 0.2)
-        self.trigger_price = self.entry_price + (self.entry_price * 0.3)
+        self.takeprofit_price = self.entry_price + (self.entry_price * self.target_p)
+        self.trigger_price = self.entry_price + (self.entry_price * self.target_p * 1.5)
 
     def trail_SL(self, stoploss, trigger, cur_price, trail_percent):
         print("Trailing the SL ...")
@@ -74,7 +76,7 @@ class autotick:
                         self.entry_price = data['entryprice']
                         self.stoploss_price = data['stoploss']
                         self.takeprofit_price = data['takeprofit']
-                        self.trigger_price = self.entry_price + (self.entry_price * 0.3)
+                        self.trigger_price = self.entry_price + (self.entry_price * self.target_p * 1.5)
 
             except Exception as err:
                 template = "An exception of type {0} occurred. error message:{1!r}"

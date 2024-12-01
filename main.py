@@ -11,7 +11,7 @@ from autotick import *
 def main():
 
     initialize_logger()
-    # lg.info("main running ...")
+    lg.info("Trading Bot running ... ! \n")
 
     ticker = "INFY"
     exchange = "NSE"
