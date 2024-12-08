@@ -182,6 +182,8 @@ class autotick:
                                                                                             self.ticker,
                                                                                             self.quantity,
                                                                                             exit_price))
+
+                lg.info("------------------------------------------------------\n")
                 time.sleep(self.interval)
 
             except KeyboardInterrupt:

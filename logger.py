@@ -21,6 +21,24 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+# Add custom log level
+DONE = 25
+lg.addLevelName(DONE, 'DONE')
+
+def done(message, *args, **kwargs):
+    """
+    Global subdebug function to log messages at SUBDEBUG level.
+    Uses the root logger.
+    """
+    root_logger = lg.getLogger()
+    if root_logger.isEnabledFor(DONE):
+        root_logger._log(DONE, message, args, **kwargs)
+
+
+# Attach the global function to the logging module
+lg.DONE = DONE
+lg.done = done
+
 class MyStreamHandler(lg.Handler):
     terminator = '\n'
 
@@ -29,12 +47,14 @@ class MyStreamHandler(lg.Handler):
         self.stream = sys.stdout
 
     def emit(self, record):
-        if record.levelno == lg.INFO or record.levelno == lg.WARNING or record.levelno == lg.ERROR:
+        if record.levelno == lg.INFO or record.levelno == lg.WARNING or record.levelno == lg.ERROR or record.levelno == lg.DONE:
             try:
                 if record.levelno == lg.ERROR:
                     msg = bcolors.ERROR + self.format(record) + bcolors.ENDC
                 elif record.levelno == lg.WARNING:
                     msg = bcolors.WARNING + self.format(record) + bcolors.ENDC
+                elif record.levelno == lg.DONE:
+                    msg = bcolors.OKGREEN + self.format(record) + bcolors.ENDC
                 else:
                     msg = self.format(record)
                 stream = self.stream

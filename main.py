@@ -27,13 +27,16 @@ def main():
 
     # read_config_data()
 
-    ticker = "INFY"
-    exchange = "NSE"
-    obj = autotick(ticker, exchange)
-    obj.set_stoploss(5)
-    obj.set_takeprofit(10)
+    # ticker = "INFY"
+    # exchange = "NSE"
+    # obj = autotick(ticker, exchange)
+    # obj.set_stoploss(5)
+    # obj.set_takeprofit(10)
 
-    obj.run_strategy()
+    # obj.run_strategy()
+    
+    lg.done("Trading Bot done ...")
+
     
 if __name__ == "__main__":
     main()

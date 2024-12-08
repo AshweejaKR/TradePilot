@@ -8,12 +8,14 @@ Created on Sat Nov 30 22:07:10 2024
 from logger import *
 from angleone_broker import *
 from aliceblue_broker import *
+from stub_broker import *
 
 class broker:
     def __init__(self, usr_="NO_USR"):
         self.usr = usr_
         lg.info(f"{self.usr} broker class constructor called")
         self._instance = None
+        self._instance = stub()
         # self._instance = angleone()
         # self._instance = aliceblue()
     

@@ -12,21 +12,35 @@ class stub:
         self.usr = usr_
         self.cp = 100.00
         lg.info(f"{self.usr} stub broker class constructor called")
+        self.__i = 0
 
     def __del__(self):
         lg.info(f"{self.usr} stub broker class destructor called")
 
     def __login(self):
-        lg.info(f"{self.usr} stub broker class Login done ...")
+        lg.done(f"{self.usr} stub broker class Login done ...")
 
     def __logout(self):
-        lg.info(f"{self.usr} stub broker class Logout done ...")
+        lg.done(f"{self.usr} stub broker class Logout done ...")
 
     def __place_order(self, ticker, quantity, buy_sell, exchange):
         orderid = "ANGEL_ID1234"
         lg.info(f"{self.usr} stub broker class placing order")
         lg.info("{} orderid: {} for {}".format(buy_sell, orderid, ticker))
         return orderid
+
+    def __read_dummy_ltp(self):
+        try:
+            with open("../ltp.txt") as file:
+                data = file.readlines()
+                if self.__i > len(data) - 1:
+                    self.__i = 0
+                ltp = float(data[self.__i])
+                self.__i = self.__i + 1
+        except Exception as err: 
+            print(err)
+            ltp = float(input("Enter current price:\n"))
+        return ltp
 
     def get_user_data(self):
         lg.info(f"{self.usr} stub broker getting user data")
@@ -38,7 +52,7 @@ class stub:
 
     def get_current_price(self, ticker, exchange):
         lg.info(f"{self.usr} stub broker current price")
-        self.cp = float(input("Enter current price:\n"))
+        self.cp = self.__read_dummy_ltp()
         return self.cp
 
     def hist_data_daily(self, ticker, duration, exchange):
