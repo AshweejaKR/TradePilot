@@ -39,6 +39,18 @@ class autotick:
         self.takeprofit_price = self.entry_price + (self.entry_price * self.target_p)
         self.trigger_price = self.entry_price + (self.entry_price * self.target_p * 1.5)
 
+    def set_stoploss(self, sl_p):
+        if sl_p < 1:
+            self.stoploss_p = sl_p
+        else:
+            self.stoploss_p = sl_p / 100.00
+
+    def set_takeprofit(self, tp_p):
+        if tp_p < 1:
+            self.target_p = tp_p
+        else:
+            self.target_p = tp_p / 100.00
+
     def trail_SL(self, stoploss, trigger, cur_price, trail_percent):
         print("Trailing the SL ...")
 
@@ -85,7 +97,7 @@ class autotick:
 
     def init_strategy(self):
         self.init_1()
-    
+
     def run_strategy(self):
         self.init_strategy()
         wait_till_market_open()
@@ -125,7 +137,7 @@ class autotick:
                                                                                             self.ticker,
                                                                                             self.quantity,
                                                                                             self.entry_price))
-                
+
                 elif (self.current_trade == "BUY") and (ret == "SELL"):
                     lg.info("Exiting Trade")
                     status = self.obj.place_sell_order(self.ticker, self.quantity, self.exchange)
@@ -140,7 +152,7 @@ class autotick:
                                                                                             self.ticker,
                                                                                             self.quantity,
                                                                                             exit_price))
-                
+
                 elif (self.current_trade == "BUY") and (cur_price > self.takeprofit_price) and not self.trailSL:
                     lg.info("Exiting Trade")
                     status = self.obj.place_sell_order(self.ticker, self.quantity, self.exchange)
@@ -170,8 +182,6 @@ class autotick:
                                                                                             self.ticker,
                                                                                             self.quantity,
                                                                                             exit_price))
-
-                
                 time.sleep(self.interval)
 
             except KeyboardInterrupt:

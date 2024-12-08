@@ -12,31 +12,27 @@ import pytz
 import time
 
 from logger import *
-
-waitTime = dt.time(8, 55)
-startTime = dt.time(9, 15)
-endTime = dt.time(15, 15)
-sleepTime = 5
+import gvars
 
 def wait_till_market_open():
     while True:
         cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
-        if cur_time > endTime or cur_time < waitTime:
+        if cur_time > gvars.endTime or cur_time < gvars.waitTime:
             lg.info('Market is closed. \n')
             return True
 
-        if cur_time > startTime:
+        if cur_time > gvars.startTime:
             break
 
         lg.info("Market is NOT opened waiting ... !")
-        time.sleep(sleepTime)
+        time.sleep(gvars.sleepTime)
 
     lg.info("Market is Opened ...")
     return True
 
 def is_market_open(mode='None'):
     cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
-    if startTime <= cur_time <= endTime:
+    if gvars.startTime <= cur_time <= gvars.endTime:
         return True
     else:
         return True
@@ -130,3 +126,12 @@ def save_trade_in_csv(ticker, quantity, order_type, price):
             f.flush()
     except Exception as err:
         print(err)
+
+# Function to extract values from a specific column
+def extract_column_value(df, attrb_column_name, value_in_list=False):
+    values = df.loc[df['ATTRB'] == attrb_column_name, 'VALUE'].values
+    if value_in_list:
+        values = values.tolist()
+        return values
+    else:
+        return values[0] if len(values) > 0 else None
