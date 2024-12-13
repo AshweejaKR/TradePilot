@@ -14,13 +14,10 @@ import gvars
 
 ###############################################################################
 ###################### dummy var ##############################################
-global datestamp_
 ###############################################################################
 
 class autotick:
     def __init__(self, ticker, exchange, mode, datestamp=dt.date.today()):
-        global datestamp_
-        datestamp_ = datestamp
         lg.info("autotick class constructor called")
         self.name = "autotick"
         self.mode = mode
@@ -38,6 +35,9 @@ class autotick:
         self.target_p = 0.1
         self.trailSL = False
         self.capital_per_trade = 1000.00
+
+        if self.mode.value == 3:
+            self.interval = 0.001
 
     def __del__(self):
         lg.info("autotick class destructor called")
@@ -211,15 +211,13 @@ class autotick:
 ###############################################################################
 ###################### dummy Init fun #########################################
     def init_1(self):
-        global datestamp_
-        ticker_symbol = self.ticker + ".NS"
-        
-        # Calculate the start and end dates
-        end_date = datetime.today()
-        start_date = end_date - timedelta(days=10)  # Approximate 10 days
-        data = fetch_historical_data(ticker_symbol, start_date, end_date)
-        self.prev_high = data['High'].iloc[1]
-        self.prev_low = data['Low'].iloc[1]
+        try:
+            hist_data = self.obj.hist_data_daily(self.ticker, 3, self.exchange)
+            print(hist_data)
+            self.prev_high = hist_data['High'].iloc[1]
+            self.prev_low = hist_data['Low'].iloc[1]
+            x = input("")
+        except Exception as err: lg.error("{}".format(err))
 
 ###############################################################################
 

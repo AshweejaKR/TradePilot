@@ -23,8 +23,8 @@ if not os.path.isdir(data_path):
     os.mkdir(data_path)
 
 # Calculate the start and end dates
-end_date = datetime.today()
-start_date = end_date - timedelta(days=10 * 30)  # Approximate 10 months as 300 days
+# end_date = datetime.today()
+# start_date = end_date - timedelta(days=10 * 30)  # Approximate 10 months as 300 days
 
 # Fetch historical data using yfinance
 def fetch_historical_data(ticker, start, end):
@@ -144,6 +144,10 @@ class broker:
         except Exception as err: 
             print(err)
 
+        lg.info(f"gvars.max_len : {gvars.max_len} ")
+        lg.info(f"gvars.i : {gvars.i} ")
+        lg.done("test init done ... !")
+
     def __login(self):
         lg.done(f"{self.usr} stub broker class Login done ...")
 
@@ -206,9 +210,13 @@ class broker:
         return cp
 
     def hist_data_daily(self, ticker, duration, exchange):
+        print(self.mode)
         if self.mode.value == 1 or self.mode.value == 2:
             historical_data = self._instance.hist_data_daily(ticker, duration, exchange)
         else:
+            end_date = datetime.today()
+            start_date = end_date - timedelta(days=10 * 30)  # Approximate 10 months as 300 days
+
             # Get the historical data
             historical_data = fetch_historical_data(self.ticker_symbol, start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
         if historical_data is not None:
