@@ -12,8 +12,15 @@ from utils import *
 
 import gvars
 
+###############################################################################
+###################### dummy var ##############################################
+global datestamp_
+###############################################################################
+
 class autotick:
     def __init__(self, ticker, exchange, mode, datestamp=dt.date.today()):
+        global datestamp_
+        datestamp_ = datestamp
         lg.info("autotick class constructor called")
         self.name = "autotick"
         self.mode = mode
@@ -204,8 +211,16 @@ class autotick:
 ###############################################################################
 ###################### dummy Init fun #########################################
     def init_1(self):
-        self.prev_high = 120.00
-        self.prev_low = 95.00
+        global datestamp_
+        ticker_symbol = self.ticker + ".NS"
+        
+        # Calculate the start and end dates
+        end_date = datetime.today()
+        start_date = end_date - timedelta(days=10)  # Approximate 10 days
+        data = fetch_historical_data(ticker_symbol, start_date, end_date)
+        self.prev_high = data['High'].iloc[1]
+        self.prev_low = data['Low'].iloc[1]
+
 ###############################################################################
 
 ########################### dummy strategy ####################################

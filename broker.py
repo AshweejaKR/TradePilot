@@ -30,8 +30,6 @@ start_date = end_date - timedelta(days=10 * 30)  # Approximate 10 months as 300 
 def fetch_historical_data(ticker, start, end):
     try:
         ticker_data = yf.Ticker(ticker)
-        # Ensure date is a string before processing
-        date = date.strftime("%Y-%m-%d")
 
         historical_data = ticker_data.history(start=start, end=end)
         return historical_data
@@ -168,10 +166,10 @@ class broker:
         try:
             with open("../ltp.txt") as file:
                 data = file.readlines()
-                if gvars.i > len(data) - 1:
-                    gvars.i = 0
-                ltp = float(data[gvars.i])
-                gvars.i = gvars.i + 1
+                # if gvars.i > len(data) - 1:
+                    # gvars.i = 0
+                ltp = float(data[0])
+                # gvars.i = gvars.i + 1
         except Exception as err: 
             print(err)
             ltp = float(input("Enter current price:\n"))

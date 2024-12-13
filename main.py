@@ -69,7 +69,6 @@ def main():
     
     del obj
     lg.done("Trading Bot done ...")
-
     
 if __name__ == "__main__":
     main()
