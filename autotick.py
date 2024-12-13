@@ -11,14 +11,15 @@ from broker import *
 from utils import *
 
 class autotick:
-    def __init__(self, ticker, exchange):
+    def __init__(self, ticker, exchange, mode, datestamp=dt.date.today()):
         lg.info("autotick class constructor called")
         self.name = "autotick"
+        self.mode = mode
         self.current_trade = "NA"
         self.ticker = ticker
         self.interval = 1
         self.exchange = exchange
-        self.obj = broker(self.ticker)
+        self.obj = broker(self.ticker, self.name, self.mode, datestamp)
         self.quantity = None
         self.entry_price = None
         self.takeprofit_price = None
@@ -26,7 +27,7 @@ class autotick:
         self.trigger_price = None
         self.stoploss_p = 0.05
         self.target_p = 0.1
-        self.trailSL = True
+        self.trailSL = False
         self.capital_per_trade = 1000.00
 
     def __del__(self):
@@ -100,9 +101,10 @@ class autotick:
 
     def run_strategy(self):
         self.init_strategy()
-        wait_till_market_open()
+        wait_till_market_open(self.mode)
         self.__load_positions()
-        while is_market_open():
+
+        while is_market_open(self.mode):
             try:
                 lg.info("Running Trade For {} ... ".format(self.ticker))
                 self.__load_positions()
@@ -112,7 +114,8 @@ class autotick:
                     ret = self.strategy(cur_price)
 
                 if self.current_trade == "BUY":
-                    tsl_change = self.trail_SL(self.stoploss_price, self.trigger_price, cur_price, 10)
+                    if self.trailSL:
+                        tsl_change = self.trail_SL(self.stoploss_price, self.trigger_price, cur_price, 10)
                     lg.info('SL %.2f <-- %.2f --> %.2f TP' % (self.stoploss_price, cur_price, self.takeprofit_price))
 
                 if self.current_trade == "NA" and (ret == "BUY"):

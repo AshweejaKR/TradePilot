@@ -7,9 +7,16 @@ Created on Sat Nov 30 18:11:42 2024
 
 import pandas as pd
 import os
+from enum import Enum
 
 from logger import *
 from autotick import *
+
+class Mode(Enum):
+    LIVE = 1
+    PAPER = 2
+    BACKTEST = 3
+    TEST = 4
 
 # def read_config_data():
 #     try:
@@ -27,14 +34,40 @@ def main():
 
     # read_config_data()
 
-    # ticker = "INFY"
-    # exchange = "NSE"
-    # obj = autotick(ticker, exchange)
+    ticker = "INFY"
+    exchange = "NSE"
+    mode = Mode.LIVE
+    
+    x = input(f"start {mode}:\n")
+    lg.info("--------------------------------------------------------------")
+    obj = autotick(ticker, exchange, mode)
+    obj.run_strategy()
+    del obj
+
+    mode = Mode.PAPER
+    x = input(f"start {mode}:\n")
+    lg.info("--------------------------------------------------------------")
+    obj = autotick(ticker, exchange, mode)
+    obj.run_strategy()
+    del obj
+
+    mode = Mode.BACKTEST
+    x = input(f"start {mode}:\n")
+    lg.info("--------------------------------------------------------------")
+    obj = autotick(ticker, exchange, mode)
+    obj.run_strategy()
+    del obj
+
+    mode = Mode.TEST
+    x = input(f"start {mode}:\n")
+    lg.info("--------------------------------------------------------------")
+    obj = autotick(ticker, exchange, mode)
+
     # obj.set_stoploss(5)
     # obj.set_takeprofit(10)
-
-    # obj.run_strategy()
+    obj.run_strategy()
     
+    del obj
     lg.done("Trading Bot done ...")
 
     

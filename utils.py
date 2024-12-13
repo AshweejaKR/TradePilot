@@ -14,12 +14,17 @@ import time
 from logger import *
 import gvars
 
-def wait_till_market_open():
+def wait_till_market_open(mode_):
+    print(mode_)
+    print(mode_.value)
     while True:
+        if mode_.value == 3 or mode_.value == 4:
+            break
+
         cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
         if cur_time > gvars.endTime or cur_time < gvars.waitTime:
             lg.info('Market is closed. \n')
-            return True
+            return False
 
         if cur_time > gvars.startTime:
             break
@@ -30,12 +35,15 @@ def wait_till_market_open():
     lg.info("Market is Opened ...")
     return True
 
-def is_market_open(mode='None'):
+def is_market_open(mode_):
+    if mode_.value == 3 or mode_.value == 4:
+        return True
+
     cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()
     if gvars.startTime <= cur_time <= gvars.endTime:
         return True
     else:
-        return True
+        return False
 
 # Function to write data to a JSON file
 def write_to_json(data, filename):
