@@ -11,3 +11,6 @@ waitTime = dt.time(8, 55)
 startTime = dt.time(9, 15)
 endTime = dt.time(15, 15)
 sleepTime = 5
+
+i = 0
+max_len = 0

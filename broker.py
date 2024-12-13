@@ -13,6 +13,11 @@ from logger import *
 from angleone_broker import *
 from aliceblue_broker import *
 
+import gvars
+global intraday_data
+global ltp
+intraday_data = []
+
 data_path = 'data/test/'
 if not os.path.isdir(data_path):
     os.mkdir(data_path)
@@ -25,22 +30,28 @@ start_date = end_date - timedelta(days=10 * 30)  # Approximate 10 months as 300 
 def fetch_historical_data(ticker, start, end):
     try:
         ticker_data = yf.Ticker(ticker)
+        # Ensure date is a string before processing
+        date = date.strftime("%Y-%m-%d")
+
         historical_data = ticker_data.history(start=start, end=end)
         return historical_data
     except Exception as e:
-        print(f"Error fetching data for {ticker_symbol}: {e}")
+        print(f"Error fetching data for {ticker}: {e}")
         return None
 
 # Function to fetch intraday data for a specific date
 def fetch_intraday_data(ticker, date):
     try:
         ticker_data = yf.Ticker(ticker)
+        # Ensure date is a string before processing
+        date = date.strftime("%Y-%m-%d")
+
         # Fetch data for the range covering the specific date
         start_date = (datetime.strptime(date, "%Y-%m-%d") - timedelta(days=1)).strftime("%Y-%m-%d")
         intraday_data = ticker_data.history(interval="1m", start=start_date, end=date)
         return intraday_data
     except Exception as e:
-        print(f"Error fetching data: {e}")
+        print(f"Error fetching data for {ticker}: {e}")
         return None
 
 # Function to fetch the current price of a stock
@@ -53,6 +64,14 @@ def fetch_current_price(ticker):
         print(f"Error fetching data for {ticker}: {e}")
         return None
 
+def fetch_current_price_bt():
+    global ltp
+    try:
+        ltp = float(intraday_data[gvars.i-1])
+    except Exception as err:
+        print(err)
+    return ltp
+
 class broker:
     def __init__(self, sym_, usr_, mode_, datestamp):
         self.mode = mode_
@@ -64,7 +83,6 @@ class broker:
         self.cp = None
         self.intraday_data = None
         lg.info(f"{self.usr} stub broker class constructor called")
-        self.__i = 0
         # Define the ticker symbol for Infosys on NSE
         self.ticker_symbol = sym_ + ".NS"
         self.__init_test(datestamp)
@@ -84,16 +102,49 @@ class broker:
 ###############################################################################
 
     def __init_test(self, datestamp):
-        if self.mode.value == 3:
-            self.intraday_data = fetch_intraday_data(self.ticker_symbol, datestamp)
+        global intraday_data
+        global ltp
+        data = fetch_intraday_data(self.ticker_symbol, datestamp)
+        max_ = 4
+        ct = 0
+        intraday_data = []
+        for i in data['Open']:
+            intraday_data.append(i)
+            ct = ct + 1
+            if ct > max_:
+                ct = 0
+                break
 
-        if self.mode.value == 4:
-            cp = fetch_current_price(self.ticker_symbol)
-            try:
-                with open("../ltp.txt", "w") as file:
-                    file.write(str(cp))
-            except Exception as err: 
-                print(err)
+        for i in data['High']:
+            intraday_data.append(i)
+            ct = ct + 1
+            if ct > max_:
+                ct = 0
+                break
+
+        for i in data['Low']:
+            intraday_data.append(i)
+            ct = ct + 1
+            if ct > max_:
+                ct = 0
+                break
+
+        for i in data['Close']:
+            intraday_data.append(i)
+            ct = ct + 1
+            if ct > max_:
+                ct = 0
+                break
+
+        gvars.max_len = len(intraday_data)
+        gvars.i = 0
+
+        ltp = fetch_current_price(self.ticker_symbol)
+        try:
+            with open("../ltp.txt", "w") as file:
+                file.write(str(ltp))
+        except Exception as err: 
+            print(err)
 
     def __login(self):
         lg.done(f"{self.usr} stub broker class Login done ...")
@@ -114,28 +165,17 @@ class broker:
         lg.info(f"{self.usr} stub broker place_sell_order")
 
     def __read_dummy_ltp(self):
-        if self.mode.value == 3:
-            try:
-                # if self.__i > len(data) - 1:
-                    # self.__i = 0
-                ltp = float(self.intraday_data[self.__i])
-                # self.__i = self.__i + 1
-            except Exception as err: 
-                print(err)
-            return ltp
-
-        if self.mode.value == 4:
-            try:
-                with open("../ltp.txt") as file:
-                    data = file.readlines()
-                    if self.__i > len(data) - 1:
-                        self.__i = 0
-                    ltp = float(data[self.__i])
-                    self.__i = self.__i + 1
-            except Exception as err: 
-                print(err)
-                ltp = float(input("Enter current price:\n"))
-            return ltp
+        try:
+            with open("../ltp.txt") as file:
+                data = file.readlines()
+                if gvars.i > len(data) - 1:
+                    gvars.i = 0
+                ltp = float(data[gvars.i])
+                gvars.i = gvars.i + 1
+        except Exception as err: 
+            print(err)
+            ltp = float(input("Enter current price:\n"))
+        return ltp
 
     def __get_oder_status(self, orderid):
         lg.info(f"{self.usr} stub broker class getting order status")
@@ -161,7 +201,7 @@ class broker:
         if self.mode.value == 1 or self.mode.value == 2:
             cp = self._instance.get_current_price(ticker, exchange)
         elif self.mode.value == 3:
-            pass
+            cp = fetch_current_price_bt()
         else:
             cp = self.__read_dummy_ltp()
             # cp = fetch_current_price(self.ticker_symbol)

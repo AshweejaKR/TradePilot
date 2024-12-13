@@ -15,8 +15,6 @@ from logger import *
 import gvars
 
 def wait_till_market_open(mode_):
-    print(mode_)
-    print(mode_.value)
     while True:
         if mode_.value == 3 or mode_.value == 4:
             break
@@ -37,6 +35,9 @@ def wait_till_market_open(mode_):
 
 def is_market_open(mode_):
     if mode_.value == 3 or mode_.value == 4:
+        if gvars.i > gvars.max_len - 1:
+            return False
+        gvars.i = gvars.i + 1
         return True
 
     cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()

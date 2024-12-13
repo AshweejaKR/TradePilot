@@ -10,6 +10,8 @@ import time
 from broker import *
 from utils import *
 
+import gvars
+
 class autotick:
     def __init__(self, ticker, exchange, mode, datestamp=dt.date.today()):
         lg.info("autotick class constructor called")
@@ -106,7 +108,7 @@ class autotick:
 
         while is_market_open(self.mode):
             try:
-                lg.info("Running Trade For {} ... ".format(self.ticker))
+                lg.info("Running Trade For {} ... {} ".format(self.ticker, gvars.i))
                 self.__load_positions()
                 cur_price = self.__get_cur_price()
                 ret = "NA"

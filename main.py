@@ -36,30 +36,30 @@ def main():
 
     ticker = "INFY"
     exchange = "NSE"
-    mode = Mode.LIVE
     
-    x = input(f"start {mode}:\n")
+    mode = Mode.LIVE    
+    # x = input(f"start {mode}:\n")
     lg.info("--------------------------------------------------------------")
     obj = autotick(ticker, exchange, mode)
     obj.run_strategy()
     del obj
 
     mode = Mode.PAPER
-    x = input(f"start {mode}:\n")
+    # x = input(f"start {mode}:\n")
     lg.info("--------------------------------------------------------------")
     obj = autotick(ticker, exchange, mode)
     obj.run_strategy()
     del obj
 
     mode = Mode.BACKTEST
-    x = input(f"start {mode}:\n")
+    # x = input(f"start {mode}:\n")
     lg.info("--------------------------------------------------------------")
     obj = autotick(ticker, exchange, mode)
     obj.run_strategy()
     del obj
 
     mode = Mode.TEST
-    x = input(f"start {mode}:\n")
+    # x = input(f"start {mode}:\n")
     lg.info("--------------------------------------------------------------")
     obj = autotick(ticker, exchange, mode)
 
