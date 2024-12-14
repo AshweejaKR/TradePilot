@@ -35,9 +35,9 @@ def wait_till_market_open(mode_):
 
 def is_market_open(mode_):
     if mode_.value == 3 or mode_.value == 4:
+        gvars.i = gvars.i + 1
         if gvars.i > gvars.max_len - 1:
             return False
-        gvars.i = gvars.i + 1
         return True
 
     cur_time = dt.datetime.now(pytz.timezone("Asia/Kolkata")).time()

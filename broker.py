@@ -135,12 +135,13 @@ class broker:
                 break
 
         gvars.max_len = len(intraday_data)
-        gvars.i = 0
+        gvars.i = -1
 
         ltp = fetch_current_price(self.ticker_symbol)
         try:
             with open("../ltp.txt", "w") as file:
-                file.write(str(ltp))
+                for i in range(5):
+                    file.write(str(ltp + i) + "\n")
         except Exception as err: 
             print(err)
 
@@ -167,16 +168,16 @@ class broker:
         lg.info(f"{self.usr} stub broker place_sell_order")
 
     def __read_dummy_ltp(self):
+        global ltp
         try:
             with open("../ltp.txt") as file:
                 data = file.readlines()
-                # if gvars.i > len(data) - 1:
-                    # gvars.i = 0
-                ltp = float(data[0])
-                # gvars.i = gvars.i + 1
+                gvars.max_len = len(data)
+                if gvars.i < gvars.max_len - 1:
+                    ltp = float(data[gvars.i])
         except Exception as err: 
             print(err)
-            ltp = float(input("Enter current price:\n"))
+            # ltp = float(input("Enter current price:\n"))
         return ltp
 
     def __get_oder_status(self, orderid):

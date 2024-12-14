@@ -216,7 +216,6 @@ class autotick:
             print(hist_data)
             self.prev_high = hist_data['High'].iloc[1]
             self.prev_low = hist_data['Low'].iloc[1]
-            x = input("")
         except Exception as err: lg.error("{}".format(err))
 
 ###############################################################################
